@@ -296,14 +296,14 @@ export async function POST(request) {
     } else if (action === 'findWithQueryingArraysWithAll') {
 
         const books = await Book.find({
-            genres: { $all: ["fantasy", "sci-fi"] } 
+            genres: { $all: ["fantasy", "sci-fi"] }
         });
         return NextResponse.json({ message: "Book found", books: books }, { status: 201 });
 
     } else if (action === 'findWithQueryingArraysWithNestedDocuments') {
         const books = await Book.find({
             //"reviews.name": "mario" 
-            "reviews.body": "So so" 
+            "reviews.body": "So so"
         });
         return NextResponse.json({ message: "Book found", books: books }, { status: 201 });
 
@@ -331,13 +331,88 @@ export async function POST(request) {
 
     } else if (action === 'deleteOne') {
 
-        const response = await Book.deleteOne({ _id: '65cf5208c43f512781b2c708'} );
+        const response = await Book.deleteOne({ _id: '65cf5208c43f512781b2c708' });
         return NextResponse.json({ message: "Book found", response: response }, { status: 201 });
 
     } else if (action === 'deleteMany') {
 
-        const response = await Book.deleteMany({ author: 'Terry Pratchett'} );
+        const response = await Book.deleteMany({ author: 'Terry Pratchett' });
         return NextResponse.json({ message: "Book found", response: response }, { status: 201 });
+
+    } else if (action === 'updateOne') {
+
+        const bookId = '65cf5208c43f512781b2c705';
+        try {
+            await Book.updateOne({ _id: bookId }, { title: 'The Light Fantastic 102', author: 'Terry Pratchett 102' });
+            console.log('Book updated');
+
+            const books = await Book.find();
+            return NextResponse.json({ message: "Books found", books: books }, { status: 201 });
+        } catch (err) {
+            console.error(err.message);
+            return NextResponse.json({ message: "Error updating book", error: err.message }, { status: 500 });
+        }
+
+    } else if (action === 'updateMany') {
+        try {
+            const result = await Book.updateMany(
+                { author: 'Terry Pratchett 1055' },
+                { author: 'Terry Pratchett' }
+            );
+
+            const books = await Book.find();
+            return NextResponse.json({ message: "Books found", books: books, result: result }, { status: 201 });
+        } catch (err) {
+            console.error('Error updating books:', err.message);
+        }
+
+    } else if (action === 'updateManyV2') {
+        try {
+            const result = await Book.updateMany(
+                { rating: { $gte: 7 } },
+                { rating: 100 }
+            );
+
+            const books = await Book.find();
+            return NextResponse.json({ message: "Books found", result: result, books: books }, { status: 201 });
+        } catch (err) {
+            console.error('Error updating books:', err.message);
+        }
+
+    } else if (action === 'updateNestedDocumentV1') {
+
+        // push into the array
+        const newGenres = ["genre1", "genre2", "genre5"];
+
+        try {
+            const result = await Book.updateOne(
+                { _id: '65cf5177c43f512781b2c701' }, 
+                { $push: { genres: { $each: newGenres } } }
+            );
+
+            const books = await Book.find();
+            return NextResponse.json({ message: "Books found", result: result, books: books }, { status: 201 });
+
+        } catch (err) {
+            console.error('Error adding genres:', err.message);
+        }
+
+    } else if (action === 'updateNestedDocumentV2') {
+
+        const newGenres = ["genre1", "fantasy", "genre5", "genre6"];
+
+        try {
+            const result = await Book.updateOne(
+                { _id: '65cf5177c43f512781b2c701' }, 
+                { $set: { genres: newGenres } }
+            );
+
+            const books = await Book.find();
+            return NextResponse.json({ message: "Books found", result: result, books: books }, { status: 201 });
+
+        } catch (err) {
+            console.error('Error adding genres:', err.message);
+        }
 
     } else if (action === 'sample') {
 
