@@ -386,7 +386,7 @@ export async function POST(request) {
 
         try {
             const result = await Book.updateOne(
-                { _id: '65cf5177c43f512781b2c701' }, 
+                { _id: '65cf5177c43f512781b2c701' },
                 { $push: { genres: { $each: newGenres } } }
             );
 
@@ -403,7 +403,7 @@ export async function POST(request) {
 
         try {
             const result = await Book.updateOne(
-                { _id: '65cf5177c43f512781b2c701' }, 
+                { _id: '65cf5177c43f512781b2c701' },
                 { $set: { genres: newGenres } }
             );
 
@@ -412,6 +412,25 @@ export async function POST(request) {
 
         } catch (err) {
             console.error('Error adding genres:', err.message);
+        }
+
+    } else if (action === 'updateNestedDocumentCatchError') {
+
+        const newGenres = ["genre1", "fantasy", "genre5", "genre6"];
+
+        try {
+            const result = await Book.updateOne(
+                { _id: '65cf5177c43f512781b2c7012' },
+                { $set: { genres: newGenres } }
+            );
+
+            const books = await Book.find();
+            return NextResponse.json({ message: "Books found", result: result, books: books }, { status: 201 });
+
+        } catch (err) {
+            //console.error(err);
+            //console.error('Error adding genres:', err.message);
+            return NextResponse.json({ message: err.message }, { status: 500 });
         }
 
     } else if (action === 'sample') {
