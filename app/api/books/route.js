@@ -7,7 +7,16 @@ export async function POST(request) {
 
     await db.connectMongoDB();
 
-    const { action } = await request.json();
+    // method 1
+    //const { action } = await request.json();
+
+    // method 2
+    const { action, ...rest } = await request.json();
+
+    // method 3
+    // const data = await request.json();
+    // const action = data.action;
+    // delete data.action; // Remove action to avoid potential conflicts
 
     if (action === 'insertBook') {
 
@@ -433,7 +442,223 @@ export async function POST(request) {
             return NextResponse.json({ message: err.message }, { status: 500 });
         }
 
+    } else if (action === 'insertNestedDocumentsManyV2') {
+
+        await Book.insertMany([
+            {
+                title: "The Light Fantastic",
+                author: "Terry Pratchett",
+                pages: 250,
+                rating: 6,
+                genres: ["fantasy", "magic"],
+                reviews: [{ name: "luigi", body: "it was pretty good" }, { name: "bowser", body: "loved it!!" }]
+            },
+            {
+                title: "The Name of the Wind",
+                author: "Patrick Rothfuss",
+                pages: 662,
+                rating: 9,
+                genres: ["fantasy"],
+                reviews: [{ name: "harry", body: "amazing storytelling!" }, { name: "hermione", body: "a must-read for fantasy lovers" }]
+            },
+            {
+                title: "1984",
+                author: "George Orwell",
+                pages: 328,
+                rating: 8,
+                genres: ["dystopian", "fiction"],
+                reviews: [{ name: "winston", body: "terrifyingly realistic" }, { name: "julia", body: "a classic that remains relevant" }]
+            },
+            {
+                title: "The Hobbit",
+                author: "J.R.R. Tolkien",
+                pages: 300,
+                rating: 9,
+                genres: ["fantasy", "adventure"],
+                reviews: [{ name: "frodo", body: "a journey worth taking" }, { name: "gandalf", body: "a timeless classic" }]
+            },
+            {
+                title: "To Kill a Mockingbird",
+                author: "Harper Lee",
+                pages: 281,
+                rating: 8,
+                genres: ["fiction", "classic"],
+                reviews: [{ name: "atticus", body: "profound and moving" }, { name: "scout", body: "a book that stays with you" }]
+            },
+            {
+                title: "Pride and Prejudice",
+                author: "Jane Austen",
+                pages: 279,
+                rating: 8,
+                genres: ["classic", "romance"],
+                reviews: [{ name: "elizabeth", body: "a delightful read" }, { name: "mr.darcy", body: "captivating characters" }]
+            },
+            {
+                title: "The Catcher in the Rye",
+                author: "J.D. Salinger",
+                pages: 277,
+                rating: 7,
+                genres: ["fiction", "coming-of-age"],
+                reviews: [{ name: "holden", body: "relatable and raw" }, { name: "phoebe", body: "a classic for a reason" }]
+            },
+            {
+                title: "Harry Potter and the Sorcerer's Stone",
+                author: "J.K. Rowling",
+                pages: 309,
+                rating: 9,
+                genres: ["fantasy", "magic"],
+                reviews: [{ name: "harry", body: "a magical journey" }, { name: "hermione", body: "captures the imagination" }]
+            },
+            {
+                title: "The Great Gatsby",
+                author: "F. Scott Fitzgerald",
+                pages: 180,
+                rating: 8,
+                genres: ["classic", "fiction"],
+                reviews: [{ name: "gatsby", body: "a timeless tale of longing" }, { name: "daisy", body: "gripping and tragic" }]
+            },
+            {
+                title: "The Hitchhiker's Guide to the Galaxy",
+                author: "Douglas Adams",
+                pages: 193,
+                rating: 8,
+                genres: ["science fiction", "comedy"],
+                reviews: [{ name: "ford", body: "hilarious and thought-provoking" }, { name: "zaphod", body: "a wild ride through the universe" }]
+            },
+            {
+                title: "The Da Vinci Code",
+                author: "Dan Brown",
+                pages: 454,
+                rating: 7,
+                genres: ["mystery", "thriller"],
+                reviews: [{ name: "robert", body: "a gripping page-turner" }, { name: "sophie", body: "intriguing puzzles and twists" }]
+            },
+            {
+                title: "The Lord of the Rings",
+                author: "J.R.R. Tolkien",
+                pages: 1178,
+                rating: 10,
+                genres: ["fantasy", "adventure"],
+                reviews: [{ name: "aragorn", body: "epic in every sense" }, { name: "gollum", body: "precious, precious book" }]
+            },
+            {
+                title: "The Hunger Games",
+                author: "Suzanne Collins",
+                pages: 374,
+                rating: 8,
+                genres: ["dystopian", "young adult"],
+                reviews: [{ name: "katniss", body: "intense and thrilling" }, { name: "peeta", body: "couldn't put it down" }]
+            },
+            {
+                title: "The Chronicles of Narnia",
+                author: "C.S. Lewis",
+                pages: 767,
+                rating: 9,
+                genres: ["fantasy", "adventure"],
+                reviews: [{ name: "aslan", body: "a timeless classic for all ages" }, { name: "lucy", body: "magical and enchanting" }]
+            },
+            {
+                title: "The Alchemist",
+                author: "Paulo Coelho",
+                pages: 197,
+                rating: 8,
+                genres: ["fiction", "philosophical"],
+                reviews: [{ name: "santiago", body: "a journey of self-discovery" }, { name: "fatima", body: "inspiring and profound" }]
+            },
+            {
+                title: "A Game of Thrones",
+                author: "George R.R. Martin",
+                pages: 694,
+                rating: 9,
+                genres: ["fantasy", "epic"],
+                reviews: [{ name: "tyrion", body: "intrigue and betrayal at every turn" }, { name: "daenerys", body: "epic fantasy at its best" }]
+            },
+            {
+                title: "The Picture of Dorian Gray",
+                author: "Oscar Wilde",
+                pages: 254,
+                rating: 9,
+                genres: ["classic", "philosophical"],
+                reviews: [{ name: "dorian", body: "hauntingly beautiful" }, { name: "lord henry", body: "a masterpiece of wit and depth" }]
+            },
+            {
+                title: "Brave New World",
+                author: "Aldous Huxley",
+                pages: 288,
+                rating: 8,
+                genres: ["dystopian", "science fiction"],
+                reviews: [{ name: "bernard", body: "chillingly prescient" }, { name: "lenina", body: "a cautionary tale for our times" }]
+            },
+            {
+                title: "The Martian",
+                author: "Andy Weir",
+                pages: 369,
+                rating: 8,
+                genres: ["science fiction", "adventure"],
+                reviews: [{ name: "mark", body: "science meets survival in a gripping story" }, { name: "nasa", body: "a thrilling ride from start to finish" }]
+            },
+            {
+                title: "The Kite Runner",
+                author: "Khaled Hosseini",
+                pages: 371,
+                rating: 9,
+                genres: ["fiction", "historical"],
+                reviews: [{ name: "amir", body: "emotionally powerful and thought-provoking" }, { name: "hassan", body: "a story of redemption and forgiveness" }]
+            },
+            {
+                title: "Moby-Dick",
+                author: "Herman Melville",
+                pages: 544,
+                rating: 7,
+                genres: ["classic", "adventure"],
+                reviews: [{ name: "ishmael", body: "a timeless tale of obsession" }, { name: "ahab", body: "haunting and epic" }]
+            }
+
+        ]);
+
+        return NextResponse.json({ message: "Books Created" }, { status: 201 });
+
+    } else if (action === 'pagination') {
+
+        let { page, limit } = rest;
+
+        // Handle invalid page/limit values and provide defaults
+        page = Math.max(1, parseInt(page) || 1);
+        limit = Math.max(1, Math.min(100, parseInt(limit) || 10)); // Limit to 100 for safety
+
+        // Calculate skip offset based on page and limit
+        const skip = (page - 1) * limit;
+
+        try {
+            // Find books with desired sorting (e.g., by date) and limit fields if needed
+            const books = await Book.find({})
+                .sort({ _id: -1 }) // Example sorting, adjust as needed
+                .skip(skip)
+                .limit(limit);
+
+            // Count total books for accurate pagination info
+            const totalBooks = await Book.countDocuments({});
+
+            // Return paginated data with additional metadata
+            let paginationCollection = {
+                books,
+                pagination: {
+                    page,
+                    limit,
+                    totalPages: Math.ceil(totalBooks / limit),
+                    totalItems: totalBooks,
+                },
+            };
+
+            return NextResponse.json({ message: "Success", data: paginationCollection }, { status: 201 });
+        } catch (error) {
+            console.error(error);
+            return { books: [], pagination: {}, error }; // Handle errors gracefully
+        }
+
     } else if (action === 'sample') {
+
+        return NextResponse.json({ message: "lalallala" }, { status: 200 });
 
     } else {
 
